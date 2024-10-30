@@ -7,6 +7,7 @@ class View:
         self.root = root
         self.sshcontroller = controller
         self.root.geometry("435x400")
+        self.root.resizable(False, False)
         self.root.iconbitmap("printdcc.ico")
         self.root.title("printDCC")
         self.root.grid_columnconfigure(0, weight=1)
@@ -36,6 +37,16 @@ class View:
             self.show_login_screen()
         else:
             messagebox.showerror("Logout Failed", message)
+
+    def print(self, printer_name,file_name,output_name,copies_spinbox,double_sided):
+
+        self.sshcontroller.print_file(printer_name,file_name,output_name,copies_spinbox,double_sided)
+
+        status, message = self.sshcontroller.print_file(printer_name,file_name,output_name,copies_spinbox,double_sided)
+        if status:
+            messagebox.showinfo("Impresión", message)
+        else:
+            messagebox.showerror("Print Failed", message)
 
     def show_login_screen(self):
         
@@ -94,7 +105,8 @@ class View:
         copies_spinbox = tk.Spinbox(self.copies_frame, from_=1, to=99, width=5)
         copies_spinbox.grid(row=0, column=1, sticky="w", padx=10, pady=(0,10))
 
-        double_sided = tk.Checkbutton(self.copies_frame, text="Doble cara")
+        double_sided_var = tk.BooleanVar()
+        double_sided = tk.Checkbutton(self.copies_frame, text="Doble cara", variable=double_sided_var)
         double_sided.grid(row=1, column=0, sticky="w")
 
         # Buttons
@@ -104,7 +116,7 @@ class View:
         logout_button = tk.Button(self.buttons_frame, text="Cerrar Sesion", width=15, command=self.logout)
         logout_button.grid(row=0, column=0, padx=(5,20), ipady=5)
 
-        print_button = tk.Button(self.buttons_frame, text="Imprimir", width=15)
+        print_button = tk.Button(self.buttons_frame, text="Imprimir", width=15, command=lambda: self.print(printer_name.get(),file_name.get(),output_name.get(),copies_spinbox.get(),double_sided_var.get()))
         print_button.grid(row=0, column=1, padx=(20,5), ipady=5)
 
     def upload_file(self, file_name):

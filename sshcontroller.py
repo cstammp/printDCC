@@ -32,14 +32,38 @@ class SSHController:
         except Exception as e:
             return False, f"Error al conectar: {str(e)}"
 
-    def print_file(self, filepath):
+    def print_file(self,printer_name,file_name,output_name,copies,double_sided):
         if not self.ssh_client:
-            raise ConnectionError("Invalid SSH connection")
-        
-        command = f"lpr {filepath}"
-        stdin, stdout, stderr = self.ssh_client.exec_command(command)
-        print("Salida:", stdout.read().decode())
-        print("Errores:", stderr.read().decode())
+            return False, "Invalid SSH connection"
+
+        command = f"pdf2ps {file_name} {output_name} && "
+        if double_sided == True:
+            command += "duplex -l out.ps|"
+        command += "lpr"
+        if printer_name == "Salita":
+            command += " -P hp-335"
+        if double_sided == False:
+            command += f" {output_name}"
+
+        print(command)
+
+        for i in range(int(copies)):
+            try:
+                _, _, stderr = self.ssh_client.exec_command(command)
+                error = stderr.read().decode()
+
+                if error:
+                    return False, f"Error en el servidor remoto: {error}"
+                return True, "El documento ha sido enviado a la impresora"
+
+            except paramiko.SSHException as ssh_error:
+                return False, f"Error de SSH: {ssh_error}"
+
+            except RuntimeError as runtime_error:
+                return False, f"Error de ejecución: {runtime_error}"
+
+            except Exception as e:
+                return False, f"Error inesperado: {e}"
 
     def disconnect(self):
         # Cierra la conexión SSH
@@ -50,15 +74,3 @@ class SSHController:
             return True, "Conexión SSH cerrada exitosamente"
         else:
             return False, "No hay una conexión SSH activa"
-
-'''
-# Ejemplo de uso
-if __name__ == "__main__":
-    server = "anakena.dcc.uchile.cl"
-    username = "usuario"
-    password = "contraseña"
-    filepath = "/ruta/al/archivo.ps"
-
-    with SSHPrinter(server, username, password) as printer:
-        printer.print_file(filepath)
-'''
