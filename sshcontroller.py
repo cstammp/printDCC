@@ -42,18 +42,14 @@ class SSHController:
         print("Errores:", stderr.read().decode())
 
     def disconnect(self):
-        #Cierra la conexión SSH
-        if self.ssh_client:
+        # Cierra la conexión SSH
+        if self.ssh_client and self.ssh_client.get_transport() and self.ssh_client.get_transport().is_active():
             self.ssh_client.close()
             self.ssh_client = None
             print("Conexión SSH cerrada.")
-
-    def __enter__(self):
-        self.connect()
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.disconnect()
+            return True, "Conexión SSH cerrada exitosamente"
+        else:
+            return False, "No hay una conexión SSH activa"
 
 '''
 # Ejemplo de uso
