@@ -1,59 +1,7 @@
-import paramiko
 import tkinter as tk
 from tkinter import filedialog, messagebox, font, ttk
 
-
-class SSHPrinter:
-    def __init__(self, server, username, password):
-        self.server = server
-        self.username = username
-        self.password = password
-        self.ssh_client = None
-
-    def connect(self):
-        #Establece una conexión SSH
-        if not self.ssh_client:
-            self.ssh_client = paramiko.SSHClient()
-            self.ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            self.ssh_client.connect(self.server, username=self.username, password=self.password)
-            print(f"Conectado a {self.server}")
-
-    def print_file(self, filepath):
-        if not self.ssh_client:
-            raise ConnectionError("Invalid SSH connection")
-        
-        command = f"lpr {filepath}"
-        stdin, stdout, stderr = self.ssh_client.exec_command(command)
-        print("Salida:", stdout.read().decode())
-        print("Errores:", stderr.read().decode())
-
-    def disconnect(self):
-        #Cierra la conexión SSH
-        if self.ssh_client:
-            self.ssh_client.close()
-            self.ssh_client = None
-            print("Conexión SSH cerrada.")
-
-    def __enter__(self):
-        self.connect()
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.disconnect()
-
-'''
-# Ejemplo de uso
-if __name__ == "__main__":
-    server = "anakena.dcc.uchile.cl"
-    username = "usuario"
-    password = "contraseña"
-    filepath = "/ruta/al/archivo.ps"
-
-    with SSHPrinter(server, username, password) as printer:
-        printer.print_file(filepath)
-'''
-
-# -- INTERFACE --
+# -- VIEW --
 
 def show_print_screen():
 
@@ -96,13 +44,24 @@ def show_print_screen():
     double_sided = tk.Checkbutton(copies_frame, text="Doble cara")
     double_sided.grid(row=1, column=0, sticky="w")
 
-# Main
-root = tk.Tk()
-root.geometry("435x400")
-root.iconbitmap("printdcc.ico")
-root.title("printDCC")
-root.grid_columnconfigure(0, weight=1)
-#root.resizable(False, False)
-show_print_screen()
+    # Buttons
+    buttons_frame = tk.Frame(root, padx=10, pady=10)
+    buttons_frame.grid(row=2, column=0, padx=10, pady=5)
 
-root.mainloop()
+    logout_button = tk.Button(buttons_frame, text="Cerrar Sesion", width=15)
+    logout_button.grid(row=0, column=0, padx=(5,20), ipady=5)
+
+    print_button = tk.Button(buttons_frame, text="Imprimir", width=15)
+    print_button.grid(row=0, column=1, padx=(20,5), ipady=5)
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.geometry("435x400")
+    root.iconbitmap("printdcc.ico")
+    root.title("printDCC")
+    root.grid_columnconfigure(0, weight=1)
+    #root.resizable(False, False)
+    show_print_screen()
+
+    root.mainloop()
