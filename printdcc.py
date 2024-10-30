@@ -1,6 +1,6 @@
 import paramiko
 import tkinter as tk
-from tkinter import filedialog, messagebox, font
+from tkinter import filedialog, messagebox, font, ttk
 
 
 class SSHPrinter:
@@ -19,7 +19,6 @@ class SSHPrinter:
             print(f"Conectado a {self.server}")
 
     def print_file(self, filepath):
-        # Envía el comando de impresión al servidor SSH
         if not self.ssh_client:
             raise ConnectionError("Invalid SSH connection")
         
@@ -45,45 +44,65 @@ class SSHPrinter:
 '''
 # Ejemplo de uso
 if __name__ == "__main__":
-    server = "servidor_universidad.com"
+    server = "anakena.dcc.uchile.cl"
     username = "usuario"
     password = "contraseña"
     filepath = "/ruta/al/archivo.ps"
 
-    # Usar la clase con un bloque 'with' para asegurar cierre automático
     with SSHPrinter(server, username, password) as printer:
         printer.print_file(filepath)
 '''
 
-# -- TKINTER --
+# -- INTERFACE --
 
+def show_print_screen():
+
+    def upload_file():
+    # Abrir cuadro de diálogo para seleccionar archivo
+        file_path = filedialog.askopenfilename(title="Seleccionar archivo", filetypes=[("Todos los archivos", "*.*")])
+        if file_path:
+            file_name.delete(0, tk.END)  # Limpiar el Entry
+            file_name.insert(0, file_path)  # Insertar la ruta del archivo seleccionado
+
+    # Printer selection
+    printer_frame = tk.LabelFrame(root, text="Printer", padx=10, pady=10)
+    printer_frame.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
+
+    tk.Label(printer_frame, text="Lugar:").grid(row=0, column=0, sticky="w", pady=(0,10))
+    printer_name = ttk.Combobox(printer_frame, values=["Toqui", "Salita"], width=35)
+    printer_name.grid(row=0, column=1, sticky="ew", padx=5, pady=(0,10))
+    printer_name.set("Toqui")
+
+    tk.Label(printer_frame, text="Archivo:").grid(row=1, column=0, sticky="w", pady=(0,10))
+    file_name = tk.Entry(printer_frame, width=40)
+    file_name.grid(row=1, column=1, sticky="ew", padx=5, pady=(0,10))
+
+    file_button = tk.Button(printer_frame, text="Seleccionar...",  command=upload_file)
+    file_button.grid(row=1, column=2, padx=5, pady=(0,10))
+
+    tk.Label(printer_frame, text="Salida:").grid(row=2, column=0, sticky="w", pady=(0,10))
+    output_name = tk.Entry(printer_frame, width=40)
+    output_name.insert(0, "out.ps")
+    output_name.grid(row=2, column=1, sticky="ew", padx=5, pady=(0,10))
+
+    # Copies
+    copies_frame = tk.LabelFrame(root, text="Copias", padx=10, pady=10)
+    copies_frame.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
+
+    tk.Label(copies_frame, text="Número de copias:").grid(row=0, column=0, sticky="w", pady=(0,10))
+    copies_spinbox = tk.Spinbox(copies_frame, from_=1, to=99, width=5)
+    copies_spinbox.grid(row=0, column=1, sticky="w", padx=10, pady=(0,10))
+
+    double_sided = tk.Checkbutton(copies_frame, text="Doble cara")
+    double_sided.grid(row=1, column=0, sticky="w")
+
+# Main
 root = tk.Tk()
-root.geometry("400x400")
+root.geometry("435x400")
 root.iconbitmap("printdcc.ico")
 root.title("printDCC")
-
-def upload_file():
-    # Abrir cuadro de diálogo para seleccionar archivo
-    file_path = filedialog.askopenfilename(title="Seleccionar archivo", filetypes=[("Todos los archivos", "*.*")])
-    
-    if file_path:
-        file_text.config(state="normal")  # Habilitar escritura temporalmente
-        file_text.delete("1.0", tk.END)  # Limpiar el contenido
-        max_length = 52  # Máximo número de caracteres antes de agregar "..."
-        display_text = file_path if len(file_path) <= max_length else file_path[:max_length - 3] + "..."
-        file_text.insert(tk.END, display_text)
-        file_text.config(state="disabled")  # Deshabilitar escritura para que sea de solo lectura
-
-# Botón para cargar archivo
-upload_button = tk.Button(root, text="Cargar Archivo", command=upload_file)
-upload_button.pack(pady=20)
-
-# Text para mostrar la ruta del archivo en modo de solo lectura
-arial_font = font.Font(family="Arial", size=10)
-file_text = tk.Text(root, width=50, height=2, wrap="word", bg=root["bg"], bd=0, font=arial_font)
-file_text.pack(pady=10)
-file_text.insert(tk.END, "No se ha seleccionado ningún archivo".center(65))  # Texto inicial centrado
-file_text.config(state="disabled")  # Establecer en solo lectura
-
+root.grid_columnconfigure(0, weight=1)
+#root.resizable(False, False)
+show_print_screen()
 
 root.mainloop()
