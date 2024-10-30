@@ -3,6 +3,34 @@ from tkinter import filedialog, messagebox, font, ttk
 
 # -- VIEW --
 
+# Login
+def show_login_screen():
+
+    def toggle_password():
+        if show_password_var.get():
+            password.config(show="")  # Muestra la contraseña
+        else:
+            password.config(show="*")  # Oculta la contraseña
+
+    login_frame = tk.LabelFrame(root, text="Conectarse a SSH Anakena", padx=10, pady=10)
+    login_frame.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
+
+    tk.Label(login_frame, text="Usuario:").grid(row=0, column=0, padx=(0,10), pady=(10,10))
+    username = tk.Entry(login_frame, width=40)
+    username.grid(row=0, column=1, sticky="ew", padx=5, pady=(10,10))
+
+    tk.Label(login_frame, text="Contraseña:").grid(row=1, column=0, padx=(0,10), pady=(0,10))
+    password = tk.Entry(login_frame, width=40, show="*")
+    password.grid(row=1, column=1, sticky="ew", padx=5, pady=(0,10))
+
+    show_password_var = tk.BooleanVar()
+    show_password = tk.Checkbutton(login_frame, text="Ver Contraseña", variable=show_password_var, command=toggle_password)
+    show_password.grid(row=2, column=1, sticky="w", pady=(0,20))
+
+    login_button = tk.Button(login_frame, text="Iniciar Sesión", width=15)
+    login_button.grid(row=3, column=1, ipady=5)
+
+# Print Screen
 def show_print_screen():
 
     def upload_file():
@@ -62,6 +90,6 @@ if __name__ == "__main__":
     root.title("printDCC")
     root.grid_columnconfigure(0, weight=1)
     #root.resizable(False, False)
-    show_print_screen()
+    show_login_screen()
 
     root.mainloop()
