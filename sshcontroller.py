@@ -1,7 +1,5 @@
-import paramiko
-import tkinter as tk
-from tkinter import messagebox
 import socket
+import paramiko
 
 class SSHController:
     def __init__(self, server):
