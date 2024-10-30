@@ -1,19 +1,36 @@
 import paramiko
+import tkinter as tk
+from tkinter import messagebox
+import socket
 
 class SSHController:
-    def __init__(self, server, username, password):
+    def __init__(self, server):
         self.server = server
-        self.username = username
-        self.password = password
+        self.username = None
+        self.password = None
         self.ssh_client = None
 
-    def connect(self):
-        #Establece una conexión SSH
+    def connect(self, username, password):
+        self.username = username
+        self.password = password
+        # Establece una conexión SSH mediante paramiko
         if not self.ssh_client:
             self.ssh_client = paramiko.SSHClient()
             self.ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            self.ssh_client.connect(self.server, username=self.username, password=self.password)
+
+        try:
+            # Intenta establecer la conexión SSH con un tiempo de espera de 10 segundos
+            self.ssh_client.connect(self.server, username=username, password=password, timeout=10)
             print(f"Conectado a {self.server}")
+            return True, "Conexión exitosa"
+        except paramiko.AuthenticationException:
+            return False, "Credenciales SSH inválidas"
+        except paramiko.SSHException as e:
+            return False, f"Error de SSH: {str(e)}"
+        except socket.timeout:
+            return False, "Tiempo de conexión agotado"
+        except Exception as e:
+            return False, f"Error al conectar: {str(e)}"
 
     def print_file(self, filepath):
         if not self.ssh_client:

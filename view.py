@@ -1,9 +1,11 @@
+from sshcontroller import SSHController
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 
 class View:
-    def __init__(self, root):
+    def __init__(self, root, controller):
         self.root = root
+        self.sshcontroller = controller
         self.root.geometry("435x400")
         self.root.iconbitmap("printdcc.ico")
         self.root.title("printDCC")
@@ -15,13 +17,16 @@ class View:
         username = self.username_entry.get()
         password = self.password_entry.get()
         
-        if username == "admin" and password == "1234":
+        status, message = self.sshcontroller.connect(username, password)
+        if status:
             self.login_frame.grid_forget()
             self.show_print_screen()
         else:
-            messagebox.showerror("Login Failed", "Invalid username or password")
+            messagebox.showerror("Login Failed", message)
+
 
     def show_login_screen(self):
+        
         self.login_frame = tk.LabelFrame(self.root, text="Conectarse a SSH Anakena", padx=10, pady=10)
         self.login_frame.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
 
@@ -84,7 +89,7 @@ class View:
         buttons_frame = tk.Frame(self.root, padx=10, pady=10)
         buttons_frame.grid(row=2, column=0, padx=10, pady=5)
 
-        logout_button = tk.Button(buttons_frame, text="Cerrar Sesion", width=15, command=self.show_login_screen)
+        logout_button = tk.Button(buttons_frame, text="Cerrar Sesion", width=15)
         logout_button.grid(row=0, column=0, padx=(5,20), ipady=5)
 
         print_button = tk.Button(buttons_frame, text="Imprimir", width=15)
@@ -96,8 +101,3 @@ class View:
         if file_path:
             file_name.delete(0, tk.END)  # Limpiar el Entry
             file_name.insert(0, file_path)  # Insertar la ruta del archivo seleccionado
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    view = View(root)
-    root.mainloop()
