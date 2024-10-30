@@ -6,7 +6,7 @@ class View:
     def __init__(self, root, controller):
         self.root = root
         self.sshcontroller = controller
-        self.root.geometry("435x400")
+        self.root.geometry("500x500")
         self.root.iconbitmap("printdcc.ico")
         self.root.title("printDCC")
         self.root.grid_columnconfigure(0, weight=1)
