@@ -1,7 +1,7 @@
 import tkinter as tk
-from tkinter import filedialog, messagebox, ttk
+from tkinter import messagebox, filedialog, ttk
 
-class View:
+class PrintDCCApp:
     def __init__(self, root):
         self.root = root
         self.root.geometry("435x400")
@@ -16,7 +16,7 @@ class View:
         password = self.password_entry.get()
         
         if username == "admin" and password == "1234":
-            self.login_frame.grid_forget()
+            self.login_frame.grid_forget()  # Oculta la pantalla de login
             self.show_print_screen()
         else:
             messagebox.showerror("Login Failed", "Invalid username or password")
@@ -41,7 +41,7 @@ class View:
         login_button.grid(row=3, column=1, ipady=5)
 
     def toggle_password(self):
-        # Hide and unhide password
+        # Alterna la visibilidad de la contraseña
         if self.password_entry.cget("show") == "*":
             self.password_entry.config(show="")
         else:
@@ -61,7 +61,7 @@ class View:
         file_name = tk.Entry(printer_frame, width=40)
         file_name.grid(row=1, column=1, sticky="ew", padx=5, pady=(0,10))
 
-        file_button = tk.Button(printer_frame, text="Seleccionar...", command=lambda: self.upload_file(file_name))
+        file_button = tk.Button(printer_frame, text="Seleccionar...", command=self.upload_file)
         file_button.grid(row=1, column=2, padx=5, pady=(0,10))
 
         tk.Label(printer_frame, text="Salida:").grid(row=2, column=0, sticky="w", pady=(0,10))
@@ -90,7 +90,7 @@ class View:
         print_button = tk.Button(buttons_frame, text="Imprimir", width=15)
         print_button.grid(row=0, column=1, padx=(20,5), ipady=5)
 
-    def upload_file(self, file_name):
+    def upload_file(self):
         # Abrir cuadro de diálogo para seleccionar archivo
         file_path = filedialog.askopenfilename(title="Seleccionar archivo", filetypes=[("Todos los archivos", "*.*")])
         if file_path:
@@ -99,5 +99,5 @@ class View:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    view = View(root)
+    app = PrintDCCApp(root)
     root.mainloop()
