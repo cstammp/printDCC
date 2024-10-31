@@ -6,11 +6,20 @@ class View:
         self.root = root
         self.sshcontroller = controller
         self.root.geometry("430x400")
-        #self.root.resizable(False, False)
+        self.root.resizable(False, False)
         self.root.iconbitmap("printdcc.ico")
         self.root.title("printDCC")
         self.root.grid_columnconfigure(0, weight=1)
         
+        # Crear la barra de menú
+        self.menu_bar = tk.Menu(self.root)
+        self.root.config(menu=self.menu_bar)
+
+        # Crear el menú "Ayuda"
+        self.help_menu = tk.Menu(self.menu_bar, tearoff=0)
+        self.menu_bar.add_cascade(label="Ayuda", menu=self.help_menu)
+        self.help_menu.add_command(label="Créditos", command=self.show_credits)
+
         self.show_login_screen()
         self.printer_frame = None
         self.copies_frame = None
@@ -124,3 +133,6 @@ class View:
         if file_path:
             file_name.delete(0, tk.END)  # Limpiar el Entry
             file_name.insert(0, file_path)  # Insertar la ruta del archivo seleccionado
+
+    def show_credits(self):
+        messagebox.showinfo("Créditos", "Desarollado por @cstammp\nVersión: 1.0\nMIT License © 2024")
