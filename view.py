@@ -48,9 +48,9 @@ class View:
 
     def print(self, printer_name,file_name,output_name,copies_spinbox,double_sided):
 
-        self.sshcontroller.print_file(printer_name,file_name,output_name,copies_spinbox,double_sided)
+        self.sshcontroller.store_file(file_name,output_name)
 
-        status, message = self.sshcontroller.print_file(printer_name,file_name,output_name,copies_spinbox,double_sided)
+        status, message = self.sshcontroller.print_file(printer_name,output_name,copies_spinbox,double_sided)
         if status:
             messagebox.showinfo("Impresión", message)
         else:

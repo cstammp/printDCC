@@ -1,5 +1,7 @@
 import socket
 import paramiko
+import uuid
+import os
 
 class SSHController:
     def __init__(self, server):
@@ -30,20 +32,59 @@ class SSHController:
         except Exception as e:
             return False, f"Error al conectar: {str(e)}"
 
-    def print_file(self,printer_name,file_name,output_name,copies,double_sided):
+    def store_file(self, local_file_path, output_name):
+            if not self.ssh_client:
+                return False, "No hay conexión SSH activa"
+
+            try:
+                # Crear una sesión SFTP
+                sftp = self.ssh_client.open_sftp()
+
+                # Crear la carpeta 'printDCC' en el servidor si no existe
+                self.ssh_client.exec_command("mkdir -p ~/printDCC")
+                print("Directorio 'printDCC' creado en el servidor.")
+
+                # Subir el archivo con un nombre genérico 'upload.pdf'
+                upload_output_name = str(uuid.uuid4()) + ".pdf"
+                remote_file_path = f"~/printDCC/{upload_output_name}"
+                sftp.put(local_file_path, remote_file_path)
+                print(f"Archivo subido exitosamente como '{upload_output_name}'")
+
+                # Convertir el archivo a PostScript
+                ps_file_path = f"~/printDCC/{output_name}"
+                _, _, stderr = self.ssh_client.exec_command(f"pdf2ps {remote_file_path} {ps_file_path}")
+
+                error = stderr.read().decode()
+                if error:
+                    print(f"Error al convertir a PS: {error}")
+                    return False, f"Error al convertir a PS: {error}"
+
+                # Eliminar el archivo pdf después de la conversión
+                self.ssh_client.exec_command(f"rm {remote_file_path}")
+                print(f"Archivo '{upload_output_name}' eliminado del servidor.")
+
+                sftp.close()
+                return True, f"Archivo convertido exitosamente a PS: {output_name}"
+            except Exception as e:
+                return False, f"Error al cargar el archivo: {e}"
+
+    def print_file(self,printer_name,output_name,copies,double_sided):
         if not self.ssh_client:
             return False, "Invalid SSH connection"
 
-        command = f"pdf2ps {file_name} {output_name} && "
+        file_path = f"~/printDCC/{output_name}"
+
+        command = ""
         if double_sided == True:
-            command += "duplex -l out.ps|"
+            command += f"duplex -l {file_path}|"
         command += "lpr"
         if printer_name == "Salita":
             command += " -P hp-335"
         if double_sided == False:
-            command += f" {output_name}"
+            command += f" {file_path}"
 
         print(command)
+        print(type(double_sided))
 
         for i in range(int(copies)):
             try:
@@ -62,7 +103,7 @@ class SSHController:
 
             except Exception as e:
                 return False, f"Error inesperado: {e}"
-
+        
     def disconnect(self):
         # Cierra la conexión SSH
         if self.ssh_client and self.ssh_client.get_transport() and self.ssh_client.get_transport().is_active():
