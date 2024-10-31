@@ -129,7 +129,7 @@ class View:
 
     def upload_file(self, file_name):
         # Abrir cuadro de diálogo para seleccionar archivo
-        file_path = filedialog.askopenfilename(title="Seleccionar archivo", filetypes=[("Todos los archivos", "*.*")])
+        file_path = filedialog.askopenfilename(title="Seleccionar archivo", filetypes=[("Archivos PDF", "*.pdf")])
         if file_path:
             file_name.delete(0, tk.END)  # Limpiar el Entry
             file_name.insert(0, file_path)  # Insertar la ruta del archivo seleccionado
