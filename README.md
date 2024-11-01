@@ -27,6 +27,6 @@ pip install -r requirements.txt
 
 ## Créditos
 
-Desarrollado por @cstammp y @ayanoteaspoon  
+Desarrollado por @cstammp 
 Versión: 1.0  
 Licencia: MIT License © 2024

@@ -135,4 +135,4 @@ class View:
             file_name.insert(0, file_path)  # Insertar la ruta del archivo seleccionado
 
     def show_credits(self):
-        messagebox.showinfo("Créditos", "Desarollado por @cstammp y @ayanoteaspoon\nVersión: 1.0\nMIT License © 2024")
+        messagebox.showinfo("Créditos", "Desarollado por @cstammp\nVersión: 1.0\nMIT License © 2024")
