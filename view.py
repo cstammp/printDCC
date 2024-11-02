@@ -11,6 +11,8 @@ class View:
         self.root.title("printDCC")
         self.root.grid_columnconfigure(0, weight=1)
         
+        self.root.protocol("WM_DELETE_WINDOW", self.on_close)
+
         # Crear la barra de menú
         self.menu_bar = tk.Menu(self.root)
         self.root.config(menu=self.menu_bar)
@@ -135,6 +137,11 @@ class View:
         if file_path:
             file_name.delete(0, tk.END)  # Limpiar el Entry
             file_name.insert(0, file_path)  # Insertar la ruta del archivo seleccionado
+
+    def on_close(self):
+        #Cierra la conexión SSH y la ventana al salir
+        self.sshcontroller.disconnect()
+        self.root.destroy()
 
     def show_credits(self):
         messagebox.showinfo("Créditos", "Desarollado por @cstammp\nVersión: 1.0\nMIT License © 2024")
