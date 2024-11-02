@@ -47,14 +47,16 @@ class View:
             messagebox.showerror("Logout Failed", message)
 
     def print(self, printer_name,file_name,output_name,copies_spinbox,double_sided):
+        status_upload, message_upload = self.sshcontroller.store_file(file_name,output_name)
 
-        self.sshcontroller.store_file(file_name,output_name)
-
-        status, message = self.sshcontroller.print_file(printer_name,output_name,copies_spinbox,double_sided)
-        if status:
-            messagebox.showinfo("Impresión", message)
+        if status_upload:
+            status_print, message_print = self.sshcontroller.print_file(printer_name,output_name,copies_spinbox,double_sided)
+            if status_print:
+                messagebox.showinfo("Impresión", message_print)
+            else:
+                messagebox.showerror("Print Failed", message_print)
         else:
-            messagebox.showerror("Print Failed", message)
+            messagebox.showerror("Upload Failed", message_upload)
 
     def show_login_screen(self):
         
