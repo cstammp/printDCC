@@ -1,9 +1,13 @@
 import tkinter as tk
 from view import View
 from sshcontroller import SSHController
-from ctypes import windll
 
-windll.shcore.SetProcessDpiAwareness(1)
+# DPI Awareness for Windows
+try:
+    from ctypes import windll
+    windll.shcore.SetProcessDpiAwareness(1)
+except (AttributeError, ImportError):
+    pass
 
 if __name__ == "__main__":
     root = tk.Tk()

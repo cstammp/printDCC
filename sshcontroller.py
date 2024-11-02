@@ -6,13 +6,9 @@ import os
 class SSHController:
     def __init__(self, server):
         self.server = server
-        self.username = None
-        self.password = None
         self.ssh_client = None
 
     def connect(self, username, password):
-        self.username = username
-        self.password = password
         # Establece una conexión SSH mediante paramiko
         if not self.ssh_client:
             self.ssh_client = paramiko.SSHClient()
