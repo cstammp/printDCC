@@ -1,7 +1,6 @@
 import socket
 import paramiko
 import uuid
-import os
 
 class SSHController:
     def __init__(self, server):
