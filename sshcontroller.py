@@ -39,9 +39,14 @@ class SSHController:
                 self.ssh_client.exec_command("mkdir -p ~/printDCC")
                 print("Directorio 'printDCC' creado en el servidor.")
 
-                # Subir el archivo con un nombre genérico 'upload.pdf'
                 upload_output_name = str(uuid.uuid4()) + ".pdf"
-                remote_file_path = f"~/printDCC/{upload_output_name}"
+                expanded_home_path = sftp.normalize('~')
+                if expanded_home_path.endswith('/~'):
+                    expanded_home_path = expanded_home_path[:-2]  # Remove the trailing /~ if present
+
+                remote_file_path = f"{expanded_home_path}/printDCC/{upload_output_name}"
+                print(expanded_home_path)
+                print(remote_file_path)
                 sftp.put(local_file_path, remote_file_path)
                 print(f"Archivo subido exitosamente como '{upload_output_name}'")
 
