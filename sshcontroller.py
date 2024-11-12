@@ -83,17 +83,15 @@ class SSHController:
         if double_sided == False:
             command += f" {file_path}"
 
-        print(command)
-        print(type(double_sided))
-
-        for i in range(int(copies)):
+        for _ in range(int(copies)):
             try:
                 _, _, stderr = self.ssh_client.exec_command(command)
                 error = stderr.read().decode()
 
+                print(command)
+                
                 if error:
                     return False, f"Error en el servidor remoto: {error}"
-                return True, "El documento ha sido enviado a la impresora"
 
             except paramiko.SSHException as ssh_error:
                 return False, f"Error de SSH: {ssh_error}"
@@ -103,6 +101,7 @@ class SSHController:
 
             except Exception as e:
                 return False, f"Error inesperado: {e}"
+        return True, "El documento ha sido enviado a la impresora"
         
     def disconnect(self):
         # Cierra la conexión SSH
