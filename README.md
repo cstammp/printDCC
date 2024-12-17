@@ -1,6 +1,6 @@
 # printDCC
 
-printDCC es una aplicación que permite la conexión al servidor anakena.dcc.uchile.cl y el envío de archivos para impresión.
+printDCC es una aplicación minimalista que permite la conexión al servidor anakena.dcc.uchile.cl y el envío de archivos para impresión.
 
 ## Requisitos
     - Python 3.x
@@ -18,7 +18,7 @@ pip install -r requirements.txt
 
 - **Configurar la impresión**:
     - Selecciona la impresora de destino.
-    - Elige un archivo PDF local para subir y especifica un nombre de archivo de salida en formato PostScript
+    - Elige un archivo PDF local para subir.
     - Define el número de copias y selecciona si deseas imprimir a doble cara.  
 
 - **Enviar a imprimir**: Al presionar “Imprimir”, el archivo se convierte automáticamente a formato PS y se envía al servidor para la impresión.
