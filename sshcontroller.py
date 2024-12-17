@@ -27,12 +27,12 @@ class SSHController:
         except Exception as e:
             return False, f"Error al conectar: {str(e)}"
 
-    def store_file(self, local_file_path, output_name):
+    def store_file(self, local_file_path):
             if not self.ssh_client:
                 return False, "No hay conexión SSH activa"
 
             try:
-                # Crear una sesión SFTP
+                # Crear una sesión SFTP (Secure File Transfer Protocol)
                 sftp = self.ssh_client.open_sftp()
 
                 # Crear la carpeta 'printDCC' en el servidor si no existe
@@ -51,7 +51,7 @@ class SSHController:
                 print(f"Archivo subido exitosamente como '{upload_output_name}'")
 
                 # Convertir el archivo a PostScript
-                ps_file_path = f"~/printDCC/{output_name}"
+                ps_file_path = "~/printDCC/out.ps"
                 _, _, stderr = self.ssh_client.exec_command(f"pdf2ps {remote_file_path} {ps_file_path}")
 
                 error = stderr.read().decode()
@@ -64,15 +64,15 @@ class SSHController:
                 print(f"Archivo '{upload_output_name}' eliminado del servidor.")
 
                 sftp.close()
-                return True, f"Archivo convertido exitosamente a PS: {output_name}"
+                return True, "Archivo convertido exitosamente a PS"
             except Exception as e:
                 return False, f"Error al cargar el archivo: {e}"
 
-    def print_file(self,printer_name,output_name,copies,double_sided):
+    def print_file(self,printer_name,copies,double_sided):
         if not self.ssh_client:
             return False, "Invalid SSH connection"
 
-        file_path = f"~/printDCC/{output_name}"
+        file_path = "~/printDCC/out.ps"
 
         command = ""
         if double_sided == True:

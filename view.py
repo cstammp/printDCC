@@ -48,11 +48,11 @@ class View:
         else:
             messagebox.showerror("Logout Failed", message)
 
-    def print(self, printer_name,file_name,output_name,copies_spinbox,double_sided):
-        status_upload, message_upload = self.sshcontroller.store_file(file_name,output_name)
+    def print(self, printer_name,file_name,copies_spinbox,double_sided):
+        status_upload, message_upload = self.sshcontroller.store_file(file_name)
 
         if status_upload:
-            status_print, message_print = self.sshcontroller.print_file(printer_name,output_name,copies_spinbox,double_sided)
+            status_print, message_print = self.sshcontroller.print_file(printer_name,copies_spinbox,double_sided)
             if status_print:
                 messagebox.showinfo("Impresión", message_print)
             else:
@@ -104,11 +104,6 @@ class View:
         file_button = tk.Button(self.printer_frame, text="Seleccionar...", command=lambda: self.upload_file(file_name))
         file_button.grid(row=1, column=2, padx=5, pady=(0,10))
 
-        tk.Label(self.printer_frame, text="Salida:").grid(row=2, column=0, sticky="w", pady=(0,10))
-        output_name = tk.Entry(self.printer_frame, width=40)
-        output_name.insert(0, "out.ps")
-        output_name.grid(row=2, column=1, sticky="ew", padx=5, pady=(0,10))
-
         # Copies
         self.copies_frame = tk.LabelFrame(self.root, text="Copias", padx=10, pady=10)
         self.copies_frame.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
@@ -128,7 +123,7 @@ class View:
         logout_button = tk.Button(self.buttons_frame, text="Cerrar Sesion", width=15, command=self.logout)
         logout_button.grid(row=0, column=0, padx=(5,20), ipady=5)
 
-        print_button = tk.Button(self.buttons_frame, text="Imprimir", width=15, command=lambda: self.print(printer_name.get(),file_name.get(),output_name.get(),copies_spinbox.get(),double_sided_var.get()))
+        print_button = tk.Button(self.buttons_frame, text="Imprimir", width=15, command=lambda: self.print(printer_name.get(),file_name.get(),copies_spinbox.get(),double_sided_var.get()))
         print_button.grid(row=0, column=1, padx=(20,5), ipady=5)
 
     def upload_file(self, file_name):
